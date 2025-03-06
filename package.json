@@ -1,0 +1,38 @@
+{
+  "name": "ai-caption-generator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.12.1",
+    "@google/generative-ai": "^0.22.0",
+    "@headlessui/react": "^2.2.0",
+    "axios": "^1.8.1",
+    "cloudinary": "^2.5.1",
+    "dotenv": "^16.4.7",
+    "formidable": "^3.5.2",
+    "framer-motion": "^12.4.9",
+    "fs": "0.0.1-security",
+    "mongodb": "^6.14.2",
+    "mongoose": "^8.12.1",
+    "next": "15.2.0",
+    "next-cloudinary": "^6.16.0",
+    "path": "^0.12.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "util": "^0.12.5",
+    "vercel": "^41.3.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.0",
+    "tailwindcss": "^4"
+  }
+}
