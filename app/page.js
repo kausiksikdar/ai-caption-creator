@@ -28,7 +28,7 @@ export default function HomePage() {
             transition={{ duration: 0.3, repeat: Infinity, repeatType: "reverse" }}
           >
             <Link href="/explore" className="mt-4 bg-blue-600 hover:bg-blue-700 transition-all text-white px-6 py-3 rounded-lg text-lg shadow-lg">
-              Start Generating Captions
+              Start Generating
             </Link>
           </motion.div>
         </SignedIn>
