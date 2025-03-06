@@ -14,6 +14,7 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "Generate", href: "/generate" },
+        { name: "Templates", href: "/templates" },
     ];
 
     return (
