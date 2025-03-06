@@ -8,6 +8,7 @@ export default function GenerateCaption() {
     const [language, setLanguage] = useState("en");
     const [captions, setCaptions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [copiedIndex, setCopiedIndex] = useState(null);
 
     const handleGenerate = async () => {
         setLoading(true);
@@ -28,12 +29,10 @@ export default function GenerateCaption() {
             if (data.caption) {
                 let allCaptions = Array.isArray(data.caption) ? data.caption : data.caption.split("\n");
 
-                // Remove first unnecessary line if present
                 if (allCaptions[0].match(/^\d*\s*$/)) {
                     allCaptions.shift();
                 }
 
-                // Remove numbering and clean up
                 const formattedCaptions = allCaptions.map((caption) =>
                     caption.replace(/^\d+\.\s*/, "").trim()
                 );
@@ -47,6 +46,13 @@ export default function GenerateCaption() {
             console.error("Fetch Error:", error);
             alert("Failed to fetch captions.");
         }
+    };
+
+    const handleCopy = (caption, index) => {
+            navigator.clipboard.writeText(caption);
+            setCopiedIndex(index);
+
+            setTimeout(() => setCopiedIndex(null), 2000); // Reset after 2 sec
     };
 
     return (
@@ -67,7 +73,6 @@ export default function GenerateCaption() {
                 className="w-full p-4 border rounded-xl text-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
 
-            {/* Tone Selection Dropdown */}
             <motion.select
                 whileHover={{ scale: 1.02 }}
                 value={tone}
@@ -81,7 +86,6 @@ export default function GenerateCaption() {
                 <option value="short">⚡ Short & Catchy</option>
             </motion.select>
 
-            {/* Language Selection Dropdown */}
             <motion.select
                 whileHover={{ scale: 1.02 }}
                 value={language}
@@ -115,13 +119,28 @@ export default function GenerateCaption() {
                 >
                     <h2 className="text-xl font-semibold text-gray-800">Generated Captions:</h2>
                     {captions.map((caption, index) => (
-                        <p 
+                        <div 
                             key={index} 
-                            className="text-lg text-gray-900 bg-white p-3 rounded-xl shadow-sm border border-gray-200"
-                            dangerouslySetInnerHTML={{
-                                __html: caption.replace(/#(\w+)/g, '<span class="text-blue-500">#$1</span>')
-                            }}
-                        />
+                            className="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-gray-200"
+                        >
+                            <p 
+                                className="text-lg text-gray-900 flex-1 mr-3"
+                                dangerouslySetInnerHTML={{
+                                    __html: caption.replace(/#(\w+)/g, '<span class="text-blue-500">#$1</span>')
+                                }}
+                            />
+                            {index > 1 && index != 12 && <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => handleCopy(caption, index)}
+                                className={`px-3 py-2 rounded-lg text-white text-sm font-medium transition-all ${
+                                    (index > 1 && index != 12 && copiedIndex === index)
+                                        ? "bg-green-500" 
+                                        : "bg-gray-600 hover:bg-gray-700"
+                                }`}
+                            >
+                                {(index > 1 && index != 12 && copiedIndex === index) ? "Copied!" : "Copy"}
+                            </motion.button>}
+                        </div>
                     ))}
                 </motion.div>
             )}

@@ -31,11 +31,6 @@ const captionTemplates = [
 export default function TemplatePage() {
     const [selectedCategory, setSelectedCategory] = useState("All");
 
-    const handleCopy = (caption) => {
-        navigator.clipboard.writeText(caption);
-        alert("Copied to clipboard!");
-    };
-
     return (
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -88,12 +83,6 @@ export default function TemplatePage() {
                                                 __html: caption.replace(/#(\w+)/g, '<span class="text-blue-500">#$1</span>')
                                             }}
                                         />
-                                        <button 
-                                            className="ml-4 text-blue-500 hover:text-blue-700"
-                                            onClick={() => handleCopy(caption)}
-                                        >
-                                            📋 Copy
-                                        </button>
                                     </div>
                                 ))}
                             </motion.div>
