@@ -1,16 +1,9 @@
 "use client";
-import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default function HomePage() {
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("guest") === "true") {
-        SignedIn("ahujarohit995@gmail.com", "Kosec@123");
-    }
-  }, []);
   return (
     <div className="flex flex-col items-center justify-center text-blue-600 min-h-screen bg-gradient-to-br from-white to-purple-600">
       {/* Main Content */}
@@ -53,8 +46,10 @@ export default function HomePage() {
               </button>
             </SignInButton>
           </motion.div>
-          <p className="mt-4 text-blue-600">
-            Sign in to unlock <span className="text-2xl font-semibold">image-based</span> AI captions and personalized suggestions.
+          <p className="mt-4 text-blue-700">
+            Sign in to unlock <span className="text-2xl text-blue-700 font-semibold">Image-based</span> AI captions and personalized suggestions.
+            To get started as guest: <span className="text-2xl text-blue-950 font-semibold">ahujarohit995@gmail.com</span> and use password 
+            <span className="text-2xl text-blue-950 font-semibold"> kosec@123</span>
           </p>
         </SignedOut>
       </motion.div>

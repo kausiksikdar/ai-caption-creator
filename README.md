@@ -1,6 +1,14 @@
 # AI Caption Generator 🚀
 A powerful AI-powered caption generator that helps you create engaging and customized captions for your social media posts with image recognition and prompt-based AI suggestions.
 
+<br>
+
+#  How to Use as guest and access all protected pages
+# Email : ahujarohit995@gmail.com
+# Password : kosec@123
+
+<br>
+
 # ✨ Features
 ✅ AI-Powered Caption Generation – Generate captions using AI based on text prompts and images.
 <br>
@@ -18,3 +26,5 @@ A powerful AI-powered caption generator that helps you create engaging and custo
 <br>
 ✅ User Authentication with Clerk – Secure sign-in and dashboard for saved captions.
 <br>
+
+

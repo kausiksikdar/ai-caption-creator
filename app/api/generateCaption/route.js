@@ -1,5 +1,4 @@
 import { connectDB } from "@/lib/mongodb";
-import Caption from "@/models/Caption";
 
 export async function POST(req) {
     try {
@@ -7,7 +6,6 @@ export async function POST(req) {
 
         const formData = await req.formData();
 
-        const userId = formData.get("userId");
         const prompt = formData.get("prompt");
         const tone = formData.get("tone") || "funny";
         const language = formData.get("language") || "en";
@@ -15,21 +13,12 @@ export async function POST(req) {
         const reason = formData.get("reason") || "general";
         const imageFile = formData.get("image");
 
-        if (!userId) {
-            return Response.json({ error: "User ID is required" }, { status: 400 });
-        }
-
-        if (!prompt) {
-            return Response.json({ error: "Please send at least a prompt" }, { status: 400 });
-        }
-
         if (!prompt && (!imageFile || !(imageFile instanceof Blob))) {
             return Response.json({ error: "Provide at least a prompt or an image" }, { status: 400 });
         }
 
         let apiRequestBody = { contents: [{ parts: [] }] };
 
-        // If an image is uploaded, convert it to Base64
         if (imageFile && imageFile instanceof Blob) {
             const buffer = Buffer.from(await imageFile.arrayBuffer());
             const base64Image = buffer.toString("base64");
@@ -39,10 +28,9 @@ export async function POST(req) {
             });
         }
 
-        // Add AI prompt dynamically based on input
         if (prompt && imageFile) {
             apiRequestBody.contents[0].parts.push({
-                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason}, combining the provided image and this prompt: "${prompt}" with some trendy hashtags. Make the captions relevant to both.`,
+                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason}, combining the provided image and this prompt: "${prompt}" with some trendy hashtags.`,
             });
         } else if (prompt) {
             apiRequestBody.contents[0].parts.push({
@@ -50,7 +38,7 @@ export async function POST(req) {
             });
         } else {
             apiRequestBody.contents[0].parts.push({
-                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason} based on the provided image with some trendy hashtags . Make the captions relevant to the image.`,
+                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason} based on the provided image with some trendy hashtags.`,
             });
         }
 
@@ -73,16 +61,6 @@ export async function POST(req) {
             .map(c => c.trim())
             .filter(Boolean);
 
-
-        console.log("💾 Saving to MongoDB...");
-        const newCaption = new Caption({
-            userId,
-            prompt: prompt || "Image-Based Caption",
-            image: imageFile ? "Uploaded Image" : null,
-            captions,
-        });
-
-        await newCaption.save();
         return Response.json({ captions }, { status: 200 });
 
     } catch (error) {

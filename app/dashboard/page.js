@@ -77,7 +77,14 @@ export default function SavedCaptions() {
                     <p className="text-gray-500">No captions saved yet.</p>
                 ) : (
                     captions.map((captionData) => {
-                        const isImageBased = captionData.captions[0]?.startsWith("Image-Based Caption");
+                        // Ensure captions are in an array format
+                        const captionsArray = typeof captionData.captions === "string"
+                            ? captionData.captions.split("\n")  // Convert string to array (assuming new lines separate captions)
+                            : Array.isArray(captionData.captions)
+                            ? captionData.captions
+                            : [];
+
+                        const isImageBased = captionsArray[0]?.startsWith("Image-Based Caption");
 
                         return (
                             <motion.div 
@@ -90,7 +97,7 @@ export default function SavedCaptions() {
                                 {/* Show Image if it's an Image-Based Caption */}
                                 {isImageBased && captionData.image && (
                                     <img 
-                                        src={captionData.image} 
+                                        src={captionData.image.startsWith("blob:") ? captionData.image : `/uploads/${captionData.image}`}
                                         alt="Generated Image" 
                                         className="w-full max-h-60 object-cover rounded-md mb-3"
                                     />
@@ -103,7 +110,7 @@ export default function SavedCaptions() {
 
                                 {/* Show Captions, Removing "Image-Based Caption" if present */}
                                 <ul className="list-none space-y-1 mt-2 text-gray-700">
-                                    {captionData.captions
+                                    {captionsArray
                                         .filter((cap, index) => index !== 0 || !isImageBased) // Remove first line if image-based
                                         .map((cap, i) => (
                                             <li key={i} className="text-gray-800">
