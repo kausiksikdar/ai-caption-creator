@@ -200,7 +200,7 @@ export default function Explore() {
 
             <input
               type="text"
-              placeholder="Describe little bit for better understanding and storage..."
+              placeholder="Describe little bit for better understanding and storage in history with a title..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="w-full p-3 border rounded-lg mt-4 bg-gray-50"

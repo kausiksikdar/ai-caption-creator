@@ -138,7 +138,7 @@ export default function GenerateCaption() {
                                         : "bg-gray-600 hover:bg-gray-700"
                                 }`}
                             >
-                                {(index > 1 && index != 12 && copiedIndex === index) ? "Copied!" : "Copy"}
+                                {(index > 1 && index != 12 && copiedIndex === index) ?  "Copied ✅" : "Copy 📋"}
                             </motion.button>}
                         </div>
                     ))}
