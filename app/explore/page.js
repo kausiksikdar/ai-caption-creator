@@ -200,7 +200,7 @@ export default function Explore() {
 
             <input
               type="text"
-              placeholder="Describe your post little bit..."
+              placeholder="Describe little bit for better understanding and storage..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="w-full p-3 border rounded-lg mt-4 bg-gray-50"
