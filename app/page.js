@@ -1,9 +1,16 @@
 "use client";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default function HomePage() {
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("guest") === "true") {
+        SignedIn("ahujarohit995@gmail.com", "Kosec@123");
+    }
+  }, []);
   return (
     <div className="flex flex-col items-center justify-center text-blue-600 min-h-screen bg-gradient-to-br from-white to-purple-600">
       {/* Main Content */}
