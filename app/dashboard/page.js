@@ -109,6 +109,11 @@ export default function SavedCaptions() {
                     transition={{ duration: 0.3 }}
                     className="bg-gray-50 p-4 rounded-lg my-4 shadow relative"
                   >
+                    {captionData.prompt && (
+                      <p className="font-semibold text-gray-900">
+                        {captionData.prompt}
+                      </p>
+                    )}
                     {captionData.image &&
                         <img
                           src={captionData.image} // Cloudinary URL
@@ -118,11 +123,6 @@ export default function SavedCaptions() {
                         />
               }
 
-                    {captionData.prompt && (
-                      <p className="font-semibold text-gray-900">
-                        {captionData.prompt}
-                      </p>
-                    )}
 
                     <ul className="list-none space-y-1 mt-2 text-gray-700">
                     {captionsArray.map((cap, i) => (
