@@ -109,17 +109,14 @@ export default function SavedCaptions() {
                     transition={{ duration: 0.3 }}
                     className="bg-gray-50 p-4 rounded-lg my-4 shadow relative"
                   >
-                    {isImageBased && captionData.image && (
-                      <img
-                        src={
-                          captionData.image.startsWith("blob:")
-                            ? captionData.image
-                            : `/uploads/${captionData.image}`
-                        }
-                        alt="Generated Image"
-                        className="w-full max-h-60 object-cover rounded-md mb-3"
-                      />
-                    )}
+                    {captionData.image &&
+                        <img
+                          src={captionData.image} // Cloudinary URL
+                          alt="Generated Image"
+                          className="w-full max-h-100 object-contain rounded-md"
+                          onError={(e) => (e.target.style.display = "none")} // Hide if broken
+                        />
+              }
 
                     {captionData.prompt && (
                       <p className="font-semibold text-gray-900">
@@ -128,25 +125,25 @@ export default function SavedCaptions() {
                     )}
 
                     <ul className="list-none space-y-1 mt-2 text-gray-700">
-                      {captionsArray.map((cap, i) => (
-                        <li
-                          key={i}
-                          className="text-gray-800 flex items-center justify-between"
-                        >
-                          <span>
-                            {cap.split(" ").map((word, idx) =>
-                              word.startsWith("#") ? (
-                                <span
-                                  key={idx}
-                                  className="text-blue-500 font-medium"
-                                >
-                                  {word}{" "}
-                                </span>
-                              ) : (
-                                <span key={idx}>{word} </span>
-                              )
-                            )}
-                          </span>
+                    {captionsArray.map((cap, i) => (
+                      <li
+                        key={i}
+                        className="text-gray-800 flex items-center justify-between"
+                      >
+                        <span>
+                          {cap.split(" ").map((word, idx) =>
+                            word.startsWith("#") ? (
+                              <span
+                                key={idx}
+                                className="text-blue-500 font-medium"
+                              >
+                                {word}{" "}
+                              </span>
+                            ) : (
+                              <span key={idx}>{word} </span>
+                            )
+                          )}
+                        </span>
 
                           {/* Copy Button - Only the clicked one changes */}
                           <motion.button

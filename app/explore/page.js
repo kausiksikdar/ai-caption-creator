@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import DialogModal from "@/components/DialogModal";
 
 export default function Explore() {
   const { user } = useUser();
@@ -21,6 +22,9 @@ export default function Explore() {
   const [tone, setTone] = useState("funny");
   const [language, setLanguage] = useState("en");
   const [reason, setReason] = useState("personal");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -35,6 +39,12 @@ export default function Explore() {
     setImage(null);
     setPreview(null);
   };
+
+  const showModal = (title, message) => {
+  setModalTitle(title);
+  setModalMessage(message);
+  setModalOpen(true);
+};
 
   const handleGenerate = async () => {
     if (!prompt && !image)
@@ -83,35 +93,66 @@ export default function Explore() {
 
   const handleSaveCaption = async (caption) => {
     if (!user) {
-        alert("You need to be signed in to save captions.");
+      showModal("Error", "You need to be signed in to save captions.");
         return;
     }
 
-    try {
-        const response = await fetch("/api/saveCaption", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userId: user.id,
-                prompt,
-                caption,
-                image: preview || null, // Send image URL if available
-            }),
-        });
+    let imageBase64 = null;
+    if (image) {
+        const reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onloadend = async () => {
+            imageBase64 = reader.result;
 
-        const data = await response.json();
-        if (response.ok) {
-            alert("Caption saved successfully!");
-        } else {
-            alert("Error: " + data.error);
+            try {
+                const response = await fetch("/api/saveCaption", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userId: user.id,
+                        prompt,
+                        caption,
+                        image: imageBase64, // Send Base64 image
+                    }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                  showModal("Success", "Caption saved successfully!");
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (error) {
+                console.error("Save Caption Error:", error);
+                alert("Failed to save caption. Check console for details.");
+            }
+        };
+    } else {
+        // If no image, send data directly
+        try {
+            const response = await fetch("/api/saveCaption", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: user.id,
+                    prompt,
+                    caption,
+                    image: null, // No image
+                }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              showModal("Success", "Caption saved successfully!");
+            } else {
+                alert("Error: " + data.error);
+            }
+        } catch (error) {
+            console.error("Save Caption Error:", error);
+            alert("Failed to save caption. Check console for details.");
         }
-    } catch (error) {
-        console.error("Save Caption Error:", error);
-        alert("Failed to save caption. Check console for details.");
     }
 };
-
-
 
   return (
     <>
@@ -292,6 +333,13 @@ export default function Explore() {
       <SignedOut>
         <RedirectToSignIn />
       </SignedOut>
+      <DialogModal
+  isOpen={modalOpen}
+  onClose={() => setModalOpen(false)}
+  title={modalTitle}
+  message={modalMessage}
+/>
+
     </>
   );
 }
