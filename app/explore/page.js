@@ -22,6 +22,7 @@ export default function Explore() {
   const [tone, setTone] = useState("funny");
   const [language, setLanguage] = useState("en");
   const [reason, setReason] = useState("personal");
+  const [platform, setPlatform] = useState("fb");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
@@ -59,6 +60,7 @@ export default function Explore() {
     formData.append("language", language);
     formData.append("no", no);
     formData.append("reason", reason);
+    formData.append("platform", platform);
     formData.append("userId", user?.id || ""); // ✅ Add userId
 
     console.log(
@@ -211,9 +213,20 @@ export default function Explore() {
               <option value="es">Spanish</option>
               <option value="fr">French</option>
               <option value="de">German</option>
-              <option value="hi">Hindi</option>
-              <option value="bn">Bengali</option>
               <option value="zh">Chinese</option>
+            </select>
+
+            <label className="block text-gray-700 font-medium">
+              Select Platform
+            </label>
+            <select
+              value={platform}
+              onChange={(e) => setPlatform(e.target.value)}
+              className="w-full p-3 border rounded-lg mt-1 bg-gray-50"
+            >
+              <option value="fb">Facebook - Overall Community</option>
+              <option value="ig">Instagram - GenZ</option>
+              <option value="tw">Twitter - Formal</option>
             </select>
 
             <label className="block text-gray-700 font-medium">
@@ -228,7 +241,6 @@ export default function Explore() {
               <option value="business">Business</option>
               <option value="beloved">Beloved</option>
               <option value="show Respect">Show Respect</option>
-              <option value="better Reach">Better Reach</option>
             </select>
 
             <input

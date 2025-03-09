@@ -11,6 +11,7 @@ export async function POST(req) {
         const language = formData.get("language") || "en";
         const no = formData.get("no") || 5;
         const reason = formData.get("reason") || "general";
+        const platform = formData.get("platform") || "fb";
         const imageFile = formData.get("image");
 
         if (!prompt && (!imageFile || !(imageFile instanceof Blob))) {
@@ -30,15 +31,15 @@ export async function POST(req) {
 
         if (prompt && imageFile) {
             apiRequestBody.contents[0].parts.push({
-                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason}, combining the provided image and this prompt: "${prompt}" with some trendy hashtags.`,
+                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason}, combining the provided image and this prompt: "${prompt}" for ${platform} with some trendy hashtags, don't describe the prompt and image tell in general out of the box new.`,
             });
         } else if (prompt) {
             apiRequestBody.contents[0].parts.push({
-                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason} based on: "${prompt}" with some trendy hashtags.`,
+                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason} based on: "${prompt}" for ${platform} with some trendy hashtags, don't describe the prompt tell in general of the box new.`,
             });
         } else {
             apiRequestBody.contents[0].parts.push({
-                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason} based on the provided image with some trendy hashtags.`,
+                text: `Generate ${no} captions in ${language} with a ${tone} tone for ${reason} based on the provided image(don't describe in general) with some trendy hashtags for ${platform} out of the box new.`,
             });
         }
 
