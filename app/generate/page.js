@@ -96,8 +96,6 @@ export default function GenerateCaption() {
                 <option value="es">🇪🇸 Spanish</option>
                 <option value="fr">🇫🇷 French</option>
                 <option value="de">🇩🇪 German</option>
-                <option value="hi">🇮🇳 Hindi</option>
-                <option value="bn">🇧🇩 Bengali</option>
                 <option value="zh">🇨🇳 Chinese</option>
             </motion.select>
 

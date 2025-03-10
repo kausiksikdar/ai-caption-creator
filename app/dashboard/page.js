@@ -3,6 +3,26 @@ import { SignedIn, SignedOut, RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Dialog } from "@headlessui/react";
+import { FaTwitter, FaFacebook, FaLinkedin, FaWhatsapp } from "react-icons/fa";
+import { Bar } from "react-chartjs-2"; // Import Chart.js
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function SavedCaptions() {
   const { user } = useUser();
@@ -11,6 +31,10 @@ export default function SavedCaptions() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCaption, setSelectedCaption] = useState(null);
   const [copiedCaptionId, setCopiedCaptionId] = useState(null);
+  const [insights, setInsights] = useState({});
+  const [loadingInsights, setLoadingInsights] = useState(null); // Track which caption is loading insights
+  const [isInsightsOpen, setIsInsightsOpen] = useState(false);
+  const [selectedInsights, setSelectedInsights] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -58,12 +82,47 @@ export default function SavedCaptions() {
     }
   };
 
+  const getShareURL = (platform, text) => {
+    const encodedText = encodeURIComponent(text);
+
+    switch (platform) {
+      case "twitter":
+        return `https://twitter.com/intent/tweet?text=${encodedText}`;
+      case "facebook":
+        return `https://www.facebook.com/sharer/sharer.php?quote=${encodedText}`;
+      case "linkedin":
+        return `https://www.linkedin.com/sharing/share-offsite/?text=${encodedText}`;
+      case "whatsapp":
+        return `https://wa.me/?text=${encodedText}}`;
+      default:
+        return "#";
+    }
+  };
+
   const handleCopy = (captionId, text) => {
     navigator.clipboard.writeText(text);
     setCopiedCaptionId(captionId);
 
     // Reset the copied state after 2 seconds
     setTimeout(() => setCopiedCaptionId(null), 2000);
+  };
+
+  const fetchInsights = async (captionId, captionText) => {
+    setLoadingInsights(captionId);
+    try {
+      const response = await fetch("/api/geminiAnalyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ caption: captionText }),
+      });
+      const data = await response.json();
+      setSelectedInsights(data);
+      setIsInsightsOpen(true);
+    } catch (error) {
+      console.error("Failed to fetch insights:", error);
+      alert("Error fetching AI insights.");
+    }
+    setLoadingInsights(null);
   };
 
   return (
@@ -114,56 +173,129 @@ export default function SavedCaptions() {
                         {captionData.prompt}
                       </p>
                     )}
-                    {captionData.image &&
-                        <img
-                          src={captionData.image} // Cloudinary URL
-                          alt="Generated Image"
-                          className="w-full max-h-100 object-contain rounded-md"
-                          onError={(e) => (e.target.style.display = "none")} // Hide if broken
-                        />
-              }
-
+                    {captionData.image && (
+                      <img
+                        src={captionData.image} // Cloudinary URL
+                        alt="Generated Image"
+                        className="w-full max-h-100 object-contain rounded-md"
+                        onError={(e) => (e.target.style.display = "none")} // Hide if broken
+                      />
+                    )}
 
                     <ul className="list-none space-y-1 mt-2 text-gray-700">
-                    {captionsArray.map((cap, i) => (
-                      <li
-                        key={i}
-                        className="text-gray-800 flex items-center justify-between"
-                      >
-                        <span>
-                          {cap.split(" ").map((word, idx) =>
-                            word.startsWith("#") ? (
-                              <span
-                                key={idx}
-                                className="text-blue-500 font-medium"
-                              >
-                                {word}{" "}
-                              </span>
-                            ) : (
-                              <span key={idx}>{word} </span>
-                            )
-                          )}
-                        </span>
+                      {captionsArray.map((cap, i) => (
+                        <li
+                          key={i}
+                          className="flex justify-between items-center"
+                        >
+                          <p
+                            className="text-lg text-gray-900 flex-1 mr-3"
+                            dangerouslySetInnerHTML={{
+                              __html: cap.replace(
+                                /#(\w+)/g,
+                                '<span class="text-blue-500">#$1</span>'
+                              ),
+                            }}
+                          />
+                          <div className="flex space-x-2">
+                            {/* Copy Button */}
+                            <button
+                              onClick={() => handleCopy(captionData._id, cap)}
+                              className={`px-3 py-1 rounded-full text-xs ${
+                                copiedCaptionId === captionData._id
+                                  ? "bg-green-500 text-white"
+                                  : "bg-gray-300 text-black hover:bg-gray-400"
+                              }`}
+                            >
+                              {copiedCaptionId === captionData._id
+                                ? "✅"
+                                : "Copy"}
+                            </button>
 
-                          {/* Copy Button - Only the clicked one changes */}
-                          <motion.button
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() =>
-                              handleCopy(
-                                captionData._id,
-                                captionsArray.join(" ")
-                              )
-                            }
-                            className={`absolute bottom-2 right-2 px-3 py-1 rounded-full text-xs transition-all ${
-                              copiedCaptionId === captionData._id
-                                ? "bg-green-500 text-white"
-                                : "bg-gray-300 text-black hover:bg-gray-400"
-                            }`}
+                            {/* Share Icons (Side-by-Side) */}
+                            <a
+                              href={getShareURL("twitter", cap)}
+                              target="_blank"
+                            >
+                              <FaTwitter className="text-blue-400 text-lg hover:text-blue-500" />
+                            </a>
+                            <a
+                              href={getShareURL("facebook", cap)}
+                              target="_blank"
+                            >
+                              <FaFacebook className="text-blue-600 text-lg hover:text-blue-700" />
+                            </a>
+                            <a
+                              href={getShareURL("linkedin", cap)}
+                              target="_blank"
+                            >
+                              <FaLinkedin className="text-blue-800 text-lg hover:text-blue-900" />
+                            </a>
+                            <a
+                              href={getShareURL("whatsapp", cap)}
+                              target="_blank"
+                            >
+                              <FaWhatsapp className="text-green-500 text-lg hover:text-green-600" />
+                            </a>
+                          </div>
+                          {/* Insights Chart */}
+                          <button
+                            onClick={() => fetchInsights(captionData._id, cap)}
                           >
-                            {copiedCaptionId === captionData._id
-                              ? "Copied ✅"
-                              : "Copy 📋"}
-                          </motion.button>
+                            {loadingInsights === captionData._id
+                              ? "Fetching Insights..."
+                              : "Get Insights"}
+                          </button>
+
+                          {/* Modal for Insights */}
+                          {isInsightsOpen && (
+                            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm p-4">
+                              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+                                <h2 className="text-lg font-bold text-gray-800">
+                                  AI Insights
+                                </h2>
+                                {selectedInsights ? (
+                                  <Bar
+                                    data={{
+                                      labels: [
+                                        "Sentiment",
+                                        "Engagement",
+                                        "Relevance",
+                                      ],
+                                      datasets: [
+                                        {
+                                          label: "Scores (0-100)",
+                                          data: [
+                                            selectedInsights.sentimentScore,
+                                            selectedInsights.engagementScore,
+                                            selectedInsights.relevanceScore,
+                                          ],
+                                          backgroundColor: [
+                                            "#4CAF50",
+                                            "#FFC107",
+                                            "#2196F3",
+                                          ],
+                                        },
+                                      ],
+                                    }}
+                                    options={{
+                                      scales: {
+                                        y: { beginAtZero: true, max: 100 },
+                                      },
+                                    }}
+                                  />
+                                ) : (
+                                  <p>No insights available.</p>
+                                )}
+                                <button
+                                  onClick={() => setIsInsightsOpen(false)}
+                                  className="mt-4 px-4 py-2 bg-gray-300 rounded"
+                                >
+                                  Close
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </li>
                       ))}
                     </ul>

@@ -351,7 +351,6 @@ export default function Explore() {
   title={modalTitle}
   message={modalMessage}
 />
-
     </>
   );
 }
