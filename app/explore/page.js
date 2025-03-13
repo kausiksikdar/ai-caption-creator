@@ -26,6 +26,7 @@ export default function Explore() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -98,6 +99,8 @@ export default function Explore() {
       showModal("Error", "You need to be signed in to save captions.");
         return;
     }
+    if (saving) return;
+    setSaving(true);
 
     let imageBase64 = null;
     if (image) {
@@ -128,6 +131,7 @@ export default function Explore() {
                 console.error("Save Caption Error:", error);
                 alert("Failed to save caption. Check console for details.");
             }
+            setSaving(false);
         };
     } else {
         // If no image, send data directly
@@ -331,7 +335,8 @@ export default function Explore() {
                     </span>
                     {index > 0 && <button
                       onClick={() => handleSaveCaption(caption)}
-                      className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 ml-2"
+                      disabled={saving}
+                      className={`bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 ml-2 ${saving ? "blur-sm" : ""}`}
                     >
                       Save
                     </button>}

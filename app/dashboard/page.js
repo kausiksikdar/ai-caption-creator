@@ -31,7 +31,6 @@ export default function SavedCaptions() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCaption, setSelectedCaption] = useState(null);
   const [copiedCaptionId, setCopiedCaptionId] = useState(null);
-  const [insights, setInsights] = useState({});
   const [loadingInsights, setLoadingInsights] = useState(null); // Track which caption is loading insights
   const [isInsightsOpen, setIsInsightsOpen] = useState(false);
   const [selectedInsights, setSelectedInsights] = useState(null);
@@ -89,11 +88,11 @@ export default function SavedCaptions() {
       case "twitter":
         return `https://twitter.com/intent/tweet?text=${encodedText}`;
       case "facebook":
-        return `https://www.facebook.com/sharer/sharer.php?quote=${encodedText}`;
+          return `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`;
       case "linkedin":
-        return `https://www.linkedin.com/sharing/share-offsite/?text=${encodedText}`;
+          return `https://www.linkedin.com/sharing/share-offsite/?url=${window.location.href}`;        
       case "whatsapp":
-        return `https://wa.me/?text=${encodedText}}`;
+        return `https://wa.me/?text=${encodedText}`;
       default:
         return "#";
     }
@@ -105,6 +104,31 @@ export default function SavedCaptions() {
 
     // Reset the copied state after 2 seconds
     setTimeout(() => setCopiedCaptionId(null), 2000);
+  };
+
+  // New function to post to community
+  const handlePostToCommunity = async (caption, imageUrl) => {
+    try {
+      const response = await fetch("/api/community/post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          username: user.fullName,
+          caption,
+          imageUrl, // Using the existing image URL if available
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Posted to community!");
+      } else {
+        alert("Failed to post.");
+      }
+    } catch (error) {
+      console.error("Error posting to community:", error);
+      alert("Error posting to community.");
+    }
   };
 
   const fetchInsights = async (captionId, captionText) => {
@@ -239,7 +263,7 @@ export default function SavedCaptions() {
                             </a>
                           </div>
                           {/* Insights Chart */}
-                          <button
+                          <button className="bg-blue-500 rounded-2xl font-black"
                             onClick={() => fetchInsights(captionData._id, cap)}
                           >
                             {loadingInsights === captionData._id
@@ -299,6 +323,14 @@ export default function SavedCaptions() {
                         </li>
                       ))}
                     </ul>
+
+                      {/* New: Post to Community Button */}
+                    <button
+                      onClick={() => handlePostToCommunity(captionData.captions, captionData.image)}
+                      className="bg-purple-500 text-white px-4 py-1 rounded-md mt-2"
+                    >
+                      Post to Community
+                    </button>
 
                     <p className="text-gray-500 text-sm mt-2">
                       {new Date(captionData.createdAt).toLocaleString()}
