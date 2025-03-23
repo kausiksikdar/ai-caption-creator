@@ -11,7 +11,7 @@ export async function POST(req) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: `Generate 10 short and engaging captions with a ${tone} tone for: ${prompt} in ${language}. 
+                contents: [{ parts: [{ text: `You are a trained caption generator for social media, Generate 10 short and engaging captions with a ${tone} tone for: ${prompt} in ${language}. 
                         Each caption must include trendy hashtags and emojis.` }] }]
             })
         });

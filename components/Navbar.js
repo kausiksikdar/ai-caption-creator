@@ -60,14 +60,14 @@ export default function Navbar() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                         >
-                            <Link href="/dashboard" className={`text-lg ${pathname === "/dashboard" ? "text-blue-600 font-bold" : "text-gray-700"}`}>Dashboard</Link>
+                            <Link href="/community" className={`text-lg ${pathname === "/community" ? "text-blue-600 font-bold" : "text-gray-700"}`}>Community</Link>
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                         >
-                            <Link href="/community" className={`text-lg ${pathname === "/community" ? "text-blue-600 font-bold" : "text-gray-700"}`}>Community</Link>
+                            <Link href="/dashboard" className={`text-lg ${pathname === "/dashboard" ? "text-blue-600 font-bold" : "text-gray-700"}`}>Dashboard</Link>
                         </motion.div>
                     </SignedIn>
                 </div>
@@ -115,14 +115,14 @@ export default function Navbar() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                         >
-                            <Link href="/dashboard" className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                        </motion.div>
+                            <Link href="/community" className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>Community</Link>
                         <motion.div
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                         >
-                            <Link href="/community" className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>Community</Link>
+                            <Link href="/dashboard" className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+                        </motion.div>
                         </motion.div>
                         <UserButton afterSignOutUrl="/" />
                     </SignedIn>

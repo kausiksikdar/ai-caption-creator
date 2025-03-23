@@ -210,7 +210,7 @@ export default function SavedCaptions() {
                       {captionsArray.map((cap, i) => (
                         <li
                           key={i}
-                          className="flex justify-between items-center"
+                          className="justify-between items-center"
                         >
                           <p
                             className="text-lg text-gray-900 flex-1 mr-3"
@@ -221,7 +221,8 @@ export default function SavedCaptions() {
                               ),
                             }}
                           />
-                          <div className="flex space-x-2">
+                          <div className="flex gap-40 justify-center space-x-2">
+                          <div className="flex gap-5 justify-center space-x-2">
                             {/* Copy Button */}
                             <button
                               onClick={() => handleCopy(captionData._id, cap)}
@@ -241,35 +242,36 @@ export default function SavedCaptions() {
                               href={getShareURL("twitter", cap)}
                               target="_blank"
                             >
-                              <FaTwitter className="text-blue-400 text-lg hover:text-blue-500" />
+                              <FaTwitter className="text-blue-400 text-3xl hover:text-blue-500" />
                             </a>
                             <a
                               href={getShareURL("facebook", cap)}
                               target="_blank"
                             >
-                              <FaFacebook className="text-blue-600 text-lg hover:text-blue-700" />
+                              <FaFacebook className="text-blue-600 text-3xl hover:text-blue-700" />
                             </a>
                             <a
                               href={getShareURL("linkedin", cap)}
                               target="_blank"
                             >
-                              <FaLinkedin className="text-blue-800 text-lg hover:text-blue-900" />
+                              <FaLinkedin className="text-blue-800 text-3xl hover:text-blue-900" />
                             </a>
                             <a
                               href={getShareURL("whatsapp", cap)}
                               target="_blank"
                             >
-                              <FaWhatsapp className="text-green-500 text-lg hover:text-green-600" />
+                              <FaWhatsapp className="text-green-500 text-3xl hover:text-green-600" />
                             </a>
                           </div>
                           {/* Insights Chart */}
-                          <button className="bg-blue-500 rounded-2xl font-black"
+                          <button className="bg-orange-500 rounded-sm font-serif"
                             onClick={() => fetchInsights(captionData._id, cap)}
                           >
                             {loadingInsights === captionData._id
                               ? "Fetching Insights..."
                               : "Get Insights"}
                           </button>
+                          </div>
 
                           {/* Modal for Insights */}
                           {isInsightsOpen && (
@@ -339,7 +341,7 @@ export default function SavedCaptions() {
                     <motion.button
                       whileTap={{ scale: 0.9 }}
                       onClick={() => openDeleteModal(captionData._id)}
-                      className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs hover:bg-red-600 transition-all"
+                      className="absolute top-2 right-2 bg-red-500 font-bold px-3 py-1 rounded-full text-xs hover:bg-red-600 transition-all"
                     >
                       Delete
                     </motion.button>
@@ -377,7 +379,7 @@ export default function SavedCaptions() {
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  className="px-4 py-2 bg-red-600 font-bold rounded hover:bg-red-700"
                 >
                   Delete
                 </button>
