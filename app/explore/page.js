@@ -27,6 +27,7 @@ export default function Explore() {
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [savingCaptionId, setSavingCaptionId] = useState(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -43,10 +44,10 @@ export default function Explore() {
   };
 
   const showModal = (title, message) => {
-  setModalTitle(title);
-  setModalMessage(message);
-  setModalOpen(true);
-};
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalOpen(true);
+  };
 
   const handleGenerate = async () => {
     if (!prompt && !image)
@@ -94,71 +95,53 @@ export default function Explore() {
     }
   };
 
-  const handleSaveCaption = async (caption) => {
+  const handleSaveCaption = async (caption, index) => {
     if (!user) {
       showModal("Error", "You need to be signed in to save captions.");
-        return;
+      return;
     }
-    if (saving) return;
-    setSaving(true);
+    if (savingCaptionId !== null) return;
+    setSavingCaptionId(index);
 
     let imageBase64 = null;
     if (image) {
-        const reader = new FileReader();
-        reader.readAsDataURL(image);
-        reader.onloadend = async () => {
-            imageBase64 = reader.result;
-
-            try {
-                const response = await fetch("/api/saveCaption", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        userId: user.id,
-                        prompt,
-                        caption,
-                        image: imageBase64, // Send Base64 image
-                    }),
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                  showModal("Success", "Caption saved successfully!");
-                } else {
-                    alert("Error: " + data.error);
-                }
-            } catch (error) {
-                console.error("Save Caption Error:", error);
-                alert("Failed to save caption. Check console for details.");
-            }
-            setSaving(false);
-        };
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onloadend = async () => {
+        imageBase64 = reader.result;
+        await saveCaptionToServer(caption, imageBase64);
+        setSavingCaptionId(null);
+      };
     } else {
-        // If no image, send data directly
-        try {
-            const response = await fetch("/api/saveCaption", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    userId: user.id,
-                    prompt,
-                    caption,
-                    image: null, // No image
-                }),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-              showModal("Success", "Caption saved successfully!");
-            } else {
-                alert("Error: " + data.error);
-            }
-        } catch (error) {
-            console.error("Save Caption Error:", error);
-            alert("Failed to save caption. Check console for details.");
-        }
+      await saveCaptionToServer(caption, null);
+      setSavingCaptionId(null);
     }
-};
+  };
+
+  const saveCaptionToServer = async (caption, imageBase64) => {
+    try {
+      const response = await fetch("/api/saveCaption", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          prompt,
+          caption,
+          image: imageBase64,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        showModal("Success", "Caption saved successfully!");
+      } else {
+        alert("Error: " + data.error);
+      }
+    } catch (error) {
+      console.error("Save Caption Error:", error);
+      alert("Failed to save caption. Check console for details.");
+    }
+  };
 
   return (
     <>
@@ -333,13 +316,17 @@ export default function Explore() {
                         )
                       )}
                     </span>
-                    {index > 0 && <button
-                      onClick={() => handleSaveCaption(caption)}
-                      disabled={saving}
-                      className={`bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 ml-2 ${saving ? "blur-sm" : ""}`}
+                    <motion.button
+                      onClick={() => handleSaveCaption(caption, index)}
+                      className="mt-2 bg-green-500 text-white px-4 py-2 rounded"
+                      whileTap={{ scale: 0.9 }}
+                      animate={
+                        savingCaptionId === index ? { scale: [1, 1.1, 1] } : {}
+                      }
+                      transition={{ duration: 0.3 }}
                     >
-                      Save
-                    </button>}
+                      {savingCaptionId === index ? "Saving..." : "Save"}
+                    </motion.button>
                   </li>
                 ))}
               </ul>
@@ -351,11 +338,11 @@ export default function Explore() {
         <RedirectToSignIn />
       </SignedOut>
       <DialogModal
-  isOpen={modalOpen}
-  onClose={() => setModalOpen(false)}
-  title={modalTitle}
-  message={modalMessage}
-/>
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalTitle}
+        message={modalMessage}
+      />
     </>
   );
 }

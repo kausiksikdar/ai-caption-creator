@@ -221,7 +221,7 @@ export default function SavedCaptions() {
                               ),
                             }}
                           />
-                          <div className="flex gap-40 justify-center space-x-2">
+                          <div className="flex m-3 gap-40 justify-center space-x-2">
                           <div className="flex gap-5 justify-center space-x-2">
                             {/* Copy Button */}
                             <button
