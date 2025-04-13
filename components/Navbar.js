@@ -19,14 +19,14 @@ export default function Navbar() {
 
     return (
         <motion.nav 
-            className="shadow-md p-4 sticky top-0 z-50 bg-white"
+            className="shadow-md p-4 sticky top-0 z-50 bg-black"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
         >
             <div className="max-w-6xl mx-auto flex justify-between items-center">
                 {/* Logo */}
-                <Link href="/" className="text-2xl font-bold text-blue-600">CaptionAI</Link>
+                <Link href="/" className="text-2xl font-bold text-[#00f0ff]">CaptionAI</Link>
                 
                 {/* Desktop Nav Links */}
                 <div className="hidden md:flex space-x-6">
@@ -39,36 +39,39 @@ export default function Navbar() {
                         >
                             <Link 
                                 href={href} 
-                                className={`text-lg ${pathname === href ? "text-blue-600 font-bold" : "text-gray-700"}`}
+                                className={`group relative text-lg transition-all duration-300 ${
+                                    pathname === href ? "text-[#00f0ff] font-bold" : "text-gray-300"
+                                }`}
                             >
                                 {name}
+                                <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#00f0ff] transition-all duration-300 group-hover:w-full rounded-full"></span>
                             </Link>
                         </motion.div>
                     ))}
 
                     {/* Protected Links - Only Visible When Signed In */}
                     <SignedIn>
-                        <motion.div
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                        >
-                            <Link href="/explore" className={`text-lg ${pathname === "/explore" ? "text-blue-600 font-bold" : "text-gray-700"}`}>Explore</Link>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                        >
-                            <Link href="/community" className={`text-lg ${pathname === "/community" ? "text-blue-600 font-bold" : "text-gray-700"}`}>Community</Link>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                        >
-                            <Link href="/dashboard" className={`text-lg ${pathname === "/dashboard" ? "text-blue-600 font-bold" : "text-gray-700"}`}>Dashboard</Link>
-                        </motion.div>
+                        {["/explore", "/community", "/dashboard"].map((href) => {
+                            const label = href.replace("/", "").charAt(0).toUpperCase() + href.slice(2);
+                            return (
+                                <motion.div
+                                    key={href}
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                >
+                                    <Link 
+                                        href={href}
+                                        className={`group relative text-lg transition-all duration-300 ${
+                                            pathname === href ? "text-[#00f0ff] font-bold" : "text-gray-300"
+                                        }`}
+                                    >
+                                        {label}
+                                        <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#00f0ff] transition-all duration-300 group-hover:w-full rounded-full"></span>
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
                     </SignedIn>
                 </div>
 
@@ -80,7 +83,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <button onClick={toggleMenu} className="md:hidden text-gray-700 text-2xl">☰</button>
+                <button onClick={toggleMenu} className="md:hidden text-gray-300 text-2xl">☰</button>
             </div>
 
             {/* Mobile Nav Menu */}
@@ -89,7 +92,7 @@ export default function Navbar() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="md:hidden flex flex-col space-y-4 mt-4 p-4 bg-white shadow-lg rounded-lg"
+                    className="md:hidden flex flex-col space-y-4 mt-4 p-4 bg-black shadow-lg rounded-lg"
                 >
                     {navLinks.map(({ name, href }) => (
                         <motion.div
@@ -98,32 +101,38 @@ export default function Navbar() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                         >
-                            <Link href={href} className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>{name}</Link>
+                            <Link 
+                                href={href}
+                                className="group relative text-lg text-gray-300"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                {name}
+                                <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#00f0ff] transition-all duration-300 group-hover:w-full rounded-full"></span>
+                            </Link>
                         </motion.div>
                     ))}
 
                     <SignedIn>
-                        <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                        >
-                            <Link href="/explore" className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>Explore</Link>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                        >
-                            <Link href="/community" className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>Community</Link>
-                        <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                        >
-                            <Link href="/dashboard" className="text-lg text-gray-700" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                        </motion.div>
-                        </motion.div>
+                        {["/explore", "/community", "/dashboard"].map((href) => {
+                            const label = href.replace("/", "").charAt(0).toUpperCase() + href.slice(2);
+                            return (
+                                <motion.div
+                                    key={href}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                >
+                                    <Link 
+                                        href={href}
+                                        className="group relative text-lg text-gray-300"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        {label}
+                                        <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#00f0ff] transition-all duration-300 group-hover:w-full rounded-full"></span>
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
                         <UserButton afterSignOutUrl="/" />
                     </SignedIn>
                 </motion.div>
